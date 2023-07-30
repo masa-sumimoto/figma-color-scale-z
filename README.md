@@ -1,40 +1,30 @@
-Below are the steps to get your plugin running. You can also find instructions at:
+# About Figma Color Scale Z
 
-  https://www.figma.com/plugin-docs/plugin-quickstart-guide/
+A plugin that can generate color scales. Select one Text, Rectangle, or Ellipse node and run the plugin. You can get graded colors from the node fill color towards white, black, complementary colors etc. You can also get a color scale by selecting two specific nodes.
 
-This plugin template uses Typescript and NPM, two standard tools in creating JavaScript applications.
+※ This is a Figma plugin that further enhances [the Adobe XD plugin](https://github.com/masa-sumimoto/adobe-xd-color-scale) created in 2020 and has been released for Figma.
 
-First, download Node.js which comes with NPM. This will allow you to install TypeScript and other
-libraries. You can find the download link here:
 
-  https://nodejs.org/en/download/
 
-Next, install TypeScript using the command:
+# For User
 
-  npm install -g typescript
+Click the "Try it out" button on [the Figma Color Scale Z plugin page](https://www.figma.com/community/plugin/1266991314988750571/Color-Scale-Z). Afterward, the plugin will be invoked from the Figma app, so please click "Run" or "Save" to use it.
 
-Finally, in the directory of your plugin, get the latest type definitions for the plugin API by running:
+※ As a note, this plugin requires selecting one to two target elements for it to be functional.
 
-  npm install --save-dev @figma/plugin-typings
 
-If you are familiar with JavaScript, TypeScript will look very familiar. In fact, valid JavaScript code
-is already valid Typescript code.
+# For Developer
 
-TypeScript adds type annotations to variables. This allows code editors such as Visual Studio Code
-to provide information about the Figma API while you are writing code, as well as help catch bugs
-you previously didn't notice.
+- I created a plugin template based on [the official portal](https://www.figma.com/plugin-docs/plugin-quickstart-guide/).
 
-For more information, visit https://www.typescriptlang.org/
+- I am using Webpack for bundling TypeScript, based on the information from [the official documentation](https://www.figma.com/plugin-docs/libraries-and-bundling/). As a result, the npm script has been modified as follows:
 
-Using TypeScript requires a compiler to convert TypeScript (code.ts) into JavaScript (code.js)
-for the browser to run.
+```
+"build": "webpack",
+"watch": "npm run build -- --watch"
+↓
+"build": "tsc -p tsconfig.json",
+"watch": "npm run build -- --watch",
 
-We recommend writing TypeScript code using Visual Studio code:
+```
 
-1. Download Visual Studio Code if you haven't already: https://code.visualstudio.com/.
-2. Open this directory in Visual Studio Code.
-3. Compile TypeScript to JavaScript: Run the "Terminal > Run Build Task..." menu item,
-    then select "npm: watch". You will have to do this again every time
-    you reopen Visual Studio Code.
-
-That's it! Visual Studio Code will regenerate the JavaScript file every time you save.

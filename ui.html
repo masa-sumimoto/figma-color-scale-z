@@ -1,17 +1,513 @@
-<h2>Rectangle Creator</h2>
-<p>Count: <input id="count" value="5"></p>
-<button id="create">Create</button>
-<button id="cancel">Cancel</button>
+<style>
+  :root {
+    --border-color: #e2e8f0;
+    --border-color-dark: #3f3f46;
+    --label-txt-color: #71717a;
+    --label-txt-color-dark: #cbd5e1;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    background-color: var(--figma-color-bg);
+    color: var(--figma-color-text);
+  }
+
+  .app {
+    font-family: Lato, sans-serif;
+  }
+
+  /* FigmaのベースのUIが少し詰まった印象があるので余白追加 */
+  .contents-wrap {
+    padding: 0 1rem;
+  }
+
+  /* component - btn */
+  .btn {
+    color: #fff;
+    display: inline-block;
+    font-weight: 400;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    user-select: none;
+    border: 1px solid transparent;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: 0.25rem;
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+    font-size: 0.875rem;
+  }
+  .btn.btn--done {
+    background-color: #14b8a6;
+    border-color: #14b8a6;
+  }
+  .btn.btn--done:hover {
+    background-color: #0d9488;
+    border-color: #0d9488;
+  }
+  .btn.btn--cancel {
+    background-color: #f43f5e;
+    border-color: #f43f5e;
+  }
+  .btn.btn--cancel:hover {
+    background-color: #e11d48;
+    border-color: #e11d48;
+  }
+  .btn.btn--opts {
+    background-color: #8b5cf6;
+    border-color: #8b5cf6;
+  }
+  .btn.btn--opts:hover {
+    background-color: #7e22ce;
+    border-color: #7e22ce;
+  }
+
+  /* component - state-msg  */
+  .state-msg {
+    display: flex;
+    justify-content: end;
+  }
+  .state-msg__txt {
+    font-size: 0.75rem;
+    font-weight: normal;
+    color: #94a3b8;
+  }
+
+  /* component - node-select-error-msg  */
+  .node-select-error-msg {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-height: 80px;
+    padding: 0.75rem;
+    background-color: #ffe4e6;
+    border-radius: 0.5rem;
+  }
+  .node-select-error-msg::before {
+    content: "";
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 10px 10px 0;
+    border-style: solid;
+    border-color: #ffe4e6 transparent transparent;
+  }
+  .node-select-error-msg__txt {
+    animation: blinking 2s ease 0.7s infinite;
+    color: #e11d48;
+    font-weight: normal;
+    line-height: 1.2;
+    font-size: 0.875rem;
+  }
+  @keyframes blinking {
+    0% {
+      opacity: 1;
+    }
+    30% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  /* component - Color bar  */
+  /* .color-bar {} */
+  .color-bar__body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 1rem;
+    background-color: #252525;
+    height: 48px;
+    border-radius: 0.375rem;
+    /* border: 1px solid #cbd5e1; */
+  }
+  .figma-light .color-bar__body {
+    border: 1px solid var(--border-color);
+  }
+  .figma-dark .color-bar__body {
+    border: 1px solid var(--border-color-dark);
+  }
+
+  .color-bar__txt {
+    color: white;
+    font-weight: normal;
+    font-size: 0.875rem;
+  }
+  .color-bar__detail {
+    margin-top: 0.375rem;
+    font-size: 0.75rem;
+    color: var(--label-txt-color);
+    text-align: center;
+    line-height: 1;
+  }
+  .figma-light .color-bar__detail {
+    color: var(--label-txt-color);
+  }
+  .figma-dark .color-bar__detail {
+    color: var(--label-txt-color-dark);
+  }
+
+  /* form-set */
+  .form-set label {
+    font-size: 0.75rem;
+    color: var(--label-txt-color);
+    line-height: 1.2;
+    margin-bottom: 0.25rem;
+  }
+  .figma-light .form-set label {
+    color: var(--label-txt-color);
+  }
+  .figma-dark .form-set label {
+    color: var(--label-txt-color-dark);
+  }
+
+  .form-set input,
+  .form-set select {
+    padding: 0.25rem;
+    border: 1px solid var(--border-color);
+  }
+
+  /* utils */
+  .d-flex {
+    display: flex;
+  }
+  .d-none {
+    display: none;
+  }
+  .d-block {
+    display: block;
+  }
+  .d-flex {
+    display: flex;
+  }
+
+  .justify-between {
+    justify-content: space-between;
+  }
+  .justify-center {
+    justify-content: center;
+  }
+  .align-items-center {
+    align-items: center;
+  }
+
+  .gap-1 {
+    gap: 0.25rem;
+  }
+  .gap-2 {
+    gap: 0.5rem;
+  }
+  .gap-3 {
+    gap: 0.75rem;
+  }
+  .gap-4 {
+    gap: 1rem;
+  }
+
+  .mt-1 {
+    margin-top: 0.25rem;
+  }
+  .mt-2 {
+    margin-top: 0.5rem;
+  }
+  .mt-3 {
+    margin-top: 0.75rem;
+  }
+  .mt-4 {
+    margin-top: 1rem;
+  }
+  .mt-5 {
+    margin-top: 1.25rem;
+  }
+
+  .pt-1 {
+    padding-top: 0.25rem;
+  }
+  .pt-2 {
+    padding-top: 0.5rem;
+  }
+  .pt-3 {
+    padding-top: 0.75rem;
+  }
+  .pt-4 {
+    padding-top: 1rem;
+  }
+
+  .figma-light .border-top {
+    border-top: 1px solid var(--border-color);
+  }
+
+  .figma-dark .border-top {
+    border-top: 1px solid var(--border-color-dark);
+  }
+
+  .h-100 {
+    height: 100%;
+  }
+
+  .cursor-pointer {
+    cursor: pointer;
+  }
+</style>
+
+<div class="app">
+  <div class="contents-wrap">
+    <!-- CONTENTS FOR SINGLE NODE -->
+    <div class="d-none contents contents--single-node">
+      <div class="state-msg"><span class="state-msg__txt"></span></div>
+      <div>
+        <div class="color-bar mt-4 color-bar--first">
+          <div class="color-bar__body">
+            <span class="color-bar__txt">Base Color</span>
+          </div>
+          <div class="color-bar__detail"></div>
+        </div>
+      </div>
+      <div class="mt-4 pt-4 border-top">
+        <div class="form-set color-mode-selector">
+          <label class="d-block" for="colorModeSelect">Select a mode:</label>
+          <select class="scale-mode-select d-block" id="colorModeSelect">
+            <option value="toWhite">To White Color</option>
+            <option value="toBlack">To Black Color</option>
+            <option value="complementary">To Complementary Color</option>
+            <option value="random">To Random Color</option>
+          </select>
+        </div>
+        <div class="form-set mt-3">
+          <label class="d-block" for="singleNodeScaleLenInput"
+            >Scale Length (2 - 100)</label
+          ><input
+            type="number"
+            min="2"
+            max="100"
+            class="scale-len-input d-block"
+            id="singleNodeScaleLenInput"
+            value="10"
+          />
+        </div>
+        <div class="form-set mt-3">
+          <label class="d-block">Option</label>
+          <label class="d-flex align-items-center cursor-pointer">
+            <input class="end-color-ck" type="checkbox" checked />
+            <span>Include end color</span>
+          </label>
+        </div>
+      </div>
+      <div class="d-flex justify-center gap-2 mt-4 pt-4 border-top">
+        <button class="btn btn--cancel cancel">Cancel</button>
+        <button class="btn btn--done create">Run</button>
+      </div>
+    </div>
+
+    <!-- CONTENTS FOR TWO NODES -->
+    <div class="d-none contents contents--two-nodes">
+      <div class="state-msg"><span class="state-msg__txt"></span></div>
+      <div>
+        <div class="color-bar mt-4 color-bar--first">
+          <div class="color-bar__body">
+            <span class="color-bar__txt">1st Color</span>
+          </div>
+          <div class="color-bar__detail"></div>
+        </div>
+        <div class="color-bar mt-4 color-bar--second">
+          <div class="color-bar__body">
+            <span class="color-bar__txt">2nd Color</span>
+          </div>
+          <div class="color-bar__detail"></div>
+        </div>
+      </div>
+      <div class="mt-4 pt-4 border-top">
+        <div class="form-set mt-3">
+          <label class="d-block" for="twoNodesScaleLenInput"
+            >Scale Length (2 - 100)</label
+          ><input
+            type="number"
+            min="2"
+            max="100"
+            class="scale-len-input d-block"
+            id="twoNodesScaleLenInput"
+            value="10"
+          />
+        </div>
+      </div>
+      <div class="d-flex justify-center gap-2 mt-4 pt-4 border-top">
+        <button class="btn btn--cancel cancel">Cancel</button>
+        <button class="btn btn--done create">Run</button>
+      </div>
+    </div>
+
+    <!-- CONTENTS FOR ERROR -->
+    <div class="d-none contents contents--error h-100">
+      <div class="d-flex justify-center align-items-center h-100">
+        <div>
+          <div class="node-select-error-msg mt-4">
+            <div class="node-select-error-msg__txt"></div>
+          </div>
+          <div class="d-flex justify-center mt-5">
+            <button class="btn btn--opts cancel">Try Again</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
+  // [todo] とにかくハードコードなのでReact化するときに全て書き直し
+  //
 
-document.getElementById('create').onclick = () => {
-  const textbox = document.getElementById('count');
-  const count = parseInt(textbox.value, 10);
-  parent.postMessage({ pluginMessage: { type: 'create-rectangles', count } }, '*')
-}
+  onmessage = (event) => {
+    // debug
+    console.clear();
 
-document.getElementById('cancel').onclick = () => {
-  parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*')
-}
+    const msg = event.data.pluginMessage;
 
+    if (msg.type === "create-ui-view") {
+      const ctx = document.querySelector(`.contents--${msg.ctxType}`);
+      // helpers
+      //
+      const dispErrorBalloon = () => {
+        document.querySelector(".contents--error").classList.remove("d-none");
+        document.querySelector(
+          ".node-select-error-msg__txt"
+        ).textContent = `${msg.msg} 😑😑😑`;
+      };
+      const dispStatusMsg = (ctx) => {
+        ctx.classList.remove("d-none");
+        ctx.querySelector(".state-msg__txt").textContent = `${msg.msg} 😀`;
+      };
+      const dispColorBar = (colorInfo, target) => {
+        target.querySelector(".color-bar__body").style.backgroundColor =
+          colorInfo.hex;
+        target.querySelector(
+          ".color-bar__detail"
+        ).textContent = `${colorInfo.hex} | R: ${colorInfo.rgb[0]} G: ${colorInfo.rgb[1]} B: ${colorInfo.rgb[2]}`;
+      };
+      const isValidateScaleLen = (val) => {
+        return !(
+          val === "" ||
+          val === null ||
+          val === undefined ||
+          isNaN(val) ||
+          val < 2 ||
+          val > 100
+        );
+      };
+      const scaleLenErrMsg =
+        "There is a possibility that the value of 'Scale Length' is empty or contains an invalid input.";
+
+      // For Single Node
+      //
+      if (msg.ctxType === "single-node") {
+        // DOM取得
+        const scaleLenInput = ctx.querySelector(".scale-len-input");
+        const scaleModeSelect = ctx.querySelector(".scale-mode-select");
+        const endColorCk = ctx.querySelector(".end-color-ck");
+        const createBtn = ctx.querySelector(".create");
+        const cancelBtn = ctx.querySelector(".cancel");
+        const colorBar = ctx.querySelector(".color-bar--first");
+
+        // 画面生成
+        dispStatusMsg(ctx);
+        dispColorBar(msg.nodeColors[0], colorBar);
+
+        // イベント定義
+        scaleModeSelect.onchange = () => {
+          if (
+            scaleModeSelect.value === "toWhite" ||
+            scaleModeSelect.value === "toBlack"
+          ) {
+            endColorCk.disabled = false;
+          } else {
+            endColorCk.checked = true;
+            endColorCk.disabled = true;
+          }
+        };
+        createBtn.onclick = () => {
+          if (!isValidateScaleLen(scaleLenInput.value)) {
+            alert(scaleLenErrMsg);
+            return false;
+          }
+          parent.postMessage(
+            {
+              pluginMessage: {
+                type: "create-color-scale",
+                scaleLen: scaleLenInput.value,
+                isIncludeEndColor: endColorCk.checked,
+                scaleMode: scaleModeSelect.value,
+              },
+            },
+            "*"
+          );
+        };
+        cancelBtn.onclick = () => {
+          parent.postMessage({ pluginMessage: { type: "cancel" } }, "*");
+        };
+      }
+
+      // For Two Nodes
+      //
+      if (msg.ctxType === "two-nodes") {
+        // DOM取得
+        const scaleLenInput = ctx.querySelector(".scale-len-input");
+        const createBtn = ctx.querySelector(".create");
+        const cancelBtn = ctx.querySelector(".cancel");
+        const colorBar1 = ctx.querySelector(".color-bar--first");
+        const colorBar2 = ctx.querySelector(".color-bar--second");
+
+        // 画面生成
+        dispStatusMsg(ctx);
+        dispColorBar(msg.nodeColors[0], colorBar1);
+        dispColorBar(msg.nodeColors[1], colorBar2);
+
+        // イベント定義
+        createBtn.onclick = () => {
+          if (!isValidateScaleLen(scaleLenInput.value)) {
+            alert(scaleLenErrMsg);
+            return false;
+          }
+          parent.postMessage(
+            {
+              pluginMessage: {
+                type: "create-color-scale",
+                scaleLen: scaleLenInput.value,
+                isIncludeEndColor: true,
+                scaleMode: "twoColors",
+              },
+            },
+            "*"
+          );
+        };
+        cancelBtn.onclick = () => {
+          parent.postMessage({ pluginMessage: { type: "cancel" } }, "*");
+        };
+      }
+
+      // For All Contents
+      //
+      if (msg.ctxType === "error") {
+        // DOM取得
+        const cancelBtn = ctx.querySelector(".cancel");
+
+        // 画面生成
+        dispErrorBalloon();
+
+        // イベント定義
+        cancelBtn.onclick = () => {
+          parent.postMessage({ pluginMessage: { type: "cancel" } }, "*");
+        };
+      }
+    }
+  };
 </script>

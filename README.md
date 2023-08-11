@@ -7,14 +7,14 @@ A plugin that can generate color scales. Select one Text, Rectangle, or Ellipse 
 ※ This is a Figma plugin that further enhances [the Adobe XD plugin](https://github.com/masa-sumimoto/adobe-xd-color-scale) created in 2020 and has been released for Figma.
 
 
-# For User
+## For User
 
 Click the "Try it out" button on [the Figma Color Scale Z plugin page](https://www.figma.com/community/plugin/1266991314988750571/Color-Scale-Z). Afterward, the plugin will be invoked from the Figma app, so please click "Run" or "Save" to use it.
 
 ※ As a note, this plugin requires selecting one to two target elements for it to be functional.
 
 
-# For Developer
+## For Developer
 
 - I created a plugin template based on [the official portal](https://www.figma.com/plugin-docs/plugin-quickstart-guide/).
 
@@ -26,6 +26,13 @@ Click the "Try it out" button on [the Figma Color Scale Z plugin page](https://w
 ↓
 "build": "tsc -p tsconfig.json",
 "watch": "npm run build -- --watch",
-
 ```
 
+## Updates
+
+In the Figma Plugin portal, every time developers upload a new source, the version is incremented by 1. I are also using the versioning approach that follows this in this repository.
+
+### Version 1
+
+- Implementation of `To Black`, `To White`, `To Complementary`, `To Random` modes.
+- Implementation of two-color blending mode.

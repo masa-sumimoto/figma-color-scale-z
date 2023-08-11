@@ -1,6 +1,6 @@
-# About Figma Color Scale Z
+![hero-image](https://github.com/masa-sumimoto/figma-color-scale-z/blob/dev-2/repository-assets/hero.png)
 
-![hero-image](https://github.com/masa-sumimoto/figma-color-scale-z/blob/main/repository-assets/hero.png)
+# About Figma Color Scale Z
 
 A plugin that can generate color scales. Select one Text, Rectangle, or Ellipse node and run the plugin. You can get graded colors from the node fill color towards white, black, complementary colors etc. You can also get a color scale by selecting two specific nodes.
 

@@ -1,58 +1,62 @@
+import config from "./config";
+
 import getSelectedNodesInfo from "./fn/getSelectedNodesInfo";
 import generateNodeColorsForUI from "./fn/generateNodeColorsForUI";
-
-import config from "./config";
+import { hasAllAvailableNodes } from "./fn/hasAllAvailableNodes";
 
 import getToWhiteColor from "./fn/getToWhiteColor";
 import getToBlackColor from "./fn/getToBlackColor";
 import getToSomeColor from "./fn/getToSomeColor";
 import getRandomNum from "./fn/getRandomNum";
 
-import { FORMATTED_COLOR_INFO, GET_COLOR } from "./types";
+import { FORMATTED_COLOR_INFO, GET_COLOR, NODE_RESULT } from "./types";
 
 figma.showUI(__html__, {
   themeColors: true,
   width: 500,
   height: 400,
-  title: "Suuumin Color Scale",
+  title: "Color Scale Z",
 });
 
-// 0. 情報の送受信両方に利用する要素の準備
-//
-
-const selectNodesInfo = getSelectedNodesInfo(figma.currentPage.selection);
+let selectNodes: SceneNode[];
+let selectNodesInfo: NODE_RESULT;
 let nodeColorInfo: FORMATTED_COLOR_INFO[];
 
-// 1. 選択ノード情報をUIに送信
-//
+function init(newSelection: SceneNode[]) {
+  selectNodes = newSelection;
+  selectNodesInfo = getSelectedNodesInfo(selectNodes);
+}
 
-if (selectNodesInfo.isValid) {
-  // RectangleNodeもしくはEllipseNodeのみをnodesに格納
-  // [todo] 既にそうなっているはずなのだが必要
-  const nodes: Array<RectangleNode | EllipseNode> =
-    selectNodesInfo.nodes.filter(
+function updateUi() {
+  if (selectNodesInfo.isValid) {
+    const nodes = selectNodesInfo.nodes.filter(
       (node): node is RectangleNode | EllipseNode => {
         return node.type === "RECTANGLE" || node.type === "ELLIPSE";
       }
     );
+    nodeColorInfo = generateNodeColorsForUI(nodes);
 
-  nodeColorInfo = generateNodeColorsForUI(nodes);
-
-  figma.ui.postMessage({
-    type: "create-ui-view",
-    viewType: selectNodesInfo.viewType,
-    ctxType: selectNodesInfo.ctxType,
-    msg: selectNodesInfo.msg,
-    nodeColors: nodeColorInfo,
-  });
-} else {
-  figma.ui.postMessage({
-    type: "create-ui-view",
-    viewType: selectNodesInfo.viewType,
-    ctxType: selectNodesInfo.ctxType,
-    msg: selectNodesInfo.msg,
-  });
+    figma.ui.postMessage({
+      type: "create-ui-view",
+      viewType: selectNodesInfo.viewType,
+      ctxType: selectNodesInfo.ctxType,
+      msg: selectNodesInfo.msg,
+      nodeColors: nodeColorInfo,
+    });
+  } else {
+    figma.ui.postMessage({
+      type: "create-ui-view",
+      viewType: selectNodesInfo.viewType,
+      ctxType: selectNodesInfo.ctxType,
+      msg: selectNodesInfo.msg,
+    });
+  }
 }
+
+// 1. 選択ノード情報をUIに送信
+//
+init([...figma.currentPage.selection]);
+updateUi();
 
 // 2. スケール生成依頼を受信
 //
@@ -132,3 +136,21 @@ figma.ui.onmessage = (msg) => {
 
   figma.closePlugin();
 };
+
+// Event
+//
+
+figma.on("selectionchange", () => {
+  // single-nodeモードの時のみ色の再選択を可能とする
+  // [todo] 後々、two-nodesモードでも可能にする
+  const newSelection = [...figma.currentPage.selection];
+  if (
+    selectNodes.length === 1 &&
+    hasAllAvailableNodes(newSelection) &&
+    newSelection !== selectNodes
+  ) {
+    console.log("hello");
+    init(newSelection);
+    updateUi();
+  }
+});

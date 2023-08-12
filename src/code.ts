@@ -15,7 +15,7 @@ figma.showUI(__html__, {
   themeColors: true,
   width: 500,
   height: 400,
-  title: "Suuumin Color Scale",
+  title: "Color Scale Z",
 });
 
 let selectNodes: SceneNode[];

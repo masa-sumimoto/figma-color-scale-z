@@ -1,4 +1,4 @@
-![hero-image](https://github.com/masa-sumimoto/figma-color-scale-z/blob/dev-2/repository-assets/hero.png)
+![hero-image](https://github.com/masa-sumimoto/figma-color-scale-z/blob/main/repository-assets/hero.png)
 
 # About Figma Color Scale Z
 
@@ -36,3 +36,7 @@ In the Figma Plugin portal, every time developers upload a new source, the versi
 
 - Implementation of `To Black`, `To White`, `To Complementary`, `To Random` modes.
 - Implementation of two-color blending mode.
+
+### Version 2
+
+- In the mode where you select one color, it is now possible to change the selected color while the plugin is active.

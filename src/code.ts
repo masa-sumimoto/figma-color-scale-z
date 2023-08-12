@@ -1,7 +1,8 @@
+import config from "./config";
+
 import getSelectedNodesInfo from "./fn/getSelectedNodesInfo";
 import generateNodeColorsForUI from "./fn/generateNodeColorsForUI";
-
-import config from "./config";
+import { hasAllAvailableNodes } from "./fn/hasAllAvailableNodes";
 
 import getToWhiteColor from "./fn/getToWhiteColor";
 import getToBlackColor from "./fn/getToBlackColor";
@@ -20,7 +21,8 @@ figma.showUI(__html__, {
 // 0. 情報の送受信両方に利用する要素の準備
 //
 
-const selectNodesInfo = getSelectedNodesInfo(figma.currentPage.selection);
+let selectNodes = figma.currentPage.selection;
+const selectNodesInfo = getSelectedNodesInfo(selectNodes);
 let nodeColorInfo: FORMATTED_COLOR_INFO[];
 
 // 1. 選択ノード情報をUIに送信
@@ -132,3 +134,18 @@ figma.ui.onmessage = (msg) => {
 
   figma.closePlugin();
 };
+
+// Event
+//
+
+figma.on("selectionchange", () => {
+  let newSelection = [...figma.currentPage.selection];
+  if (
+    selectNodes &&
+    hasAllAvailableNodes(newSelection) &&
+    newSelection !== selectNodes
+  ) {
+    // selectNodes = newSelection;
+    // console.log(newSelection);
+  }
+});

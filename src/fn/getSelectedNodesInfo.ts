@@ -3,9 +3,7 @@ import t from "../locales";
 
 import { NODE_RESULT, LOCALE } from "../types";
 
-export default function getSelectedNodesInfo(
-  nodes: readonly SceneNode[]
-): NODE_RESULT {
+export default function getSelectedNodesInfo(nodes: SceneNode[]): NODE_RESULT {
   const locale: LOCALE = config["locale"];
 
   // [todo]

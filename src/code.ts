@@ -22,6 +22,7 @@ figma.showUI(__html__, {
 //
 
 let selectNodes = figma.currentPage.selection;
+let selectNodes = [...figma.currentPage.selection];
 const selectNodesInfo = getSelectedNodesInfo(selectNodes);
 let nodeColorInfo: FORMATTED_COLOR_INFO[];
 

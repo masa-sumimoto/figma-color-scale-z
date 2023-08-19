@@ -74,9 +74,6 @@ export default function getSelectedNodesInfo(nodes: SceneNode[]): NODE_RESULT {
 
   // アプリ実行が成立する場合:
   //
-
-  // アプリ実行が成立する場合:
-  //
   if (enableNodes.length === 1) {
     return {
       isValid: true,

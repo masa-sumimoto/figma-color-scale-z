@@ -40,3 +40,7 @@ In the Figma Plugin portal, every time developers upload a new source, the versi
 ### Version 2
 
 - In the mode where you select one color, it is now possible to change the selected color while the plugin is active.
+
+### Version 3
+
+- While the plug-in is running, it is now possible to seamlessly switch between single node mode and two nodes mode.

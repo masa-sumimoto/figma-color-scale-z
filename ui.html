@@ -21,9 +21,14 @@
   .app {
     font-family: Lato, sans-serif;
   }
-  /* NOTE : Figmaのデフォルトiframeの余白にプラスする */
+
   .contents-wrap {
     padding: 0 1rem;
+    position: relative;
+  }
+
+  .contents {
+    position: relative;
   }
 
   /* component - btn */
@@ -78,47 +83,6 @@
     font-size: 0.75rem;
     font-weight: normal;
     color: #94a3b8;
-  }
-
-  /* component - node-select-error-msg */
-  .node-select-error-msg {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    min-height: 80px;
-    padding: 0.75rem;
-    background-color: #ffe4e6;
-    border-radius: 0.5rem;
-  }
-  .node-select-error-msg::before {
-    content: "";
-    position: absolute;
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    border-width: 10px 10px 0;
-    border-style: solid;
-    border-color: #ffe4e6 transparent transparent;
-  }
-  .node-select-error-msg__txt {
-    animation: blinking 2s ease 0.7s infinite;
-    color: #e11d48;
-    font-weight: normal;
-    line-height: 1.2;
-    font-size: 0.875rem;
-  }
-  @keyframes blinking {
-    0% {
-      opacity: 1;
-    }
-    30% {
-      opacity: 0;
-    }
-    100% {
-      opacity: 1;
-    }
   }
 
   /* component - Color bar */
@@ -176,6 +140,25 @@
   .form-set select {
     padding: 0.25rem;
     border: 1px solid var(--border-color);
+  }
+
+  /* error-msg */
+  .error-msg {
+    text-align: center;
+    font-weight: 500;
+    color: #7e22ce;
+    animation: blinking 3s ease 0.7s infinite;
+  }
+  @keyframes blinking {
+    0% {
+      opacity: 1;
+    }
+    30% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
   }
 
   /* utils - display */
@@ -351,13 +334,9 @@
     <!-- CONTENTS FOR ERROR -->
     <div class="d-none contents contents--error h-100">
       <div class="d-flex justify-center align-items-center h-100">
-        <div>
-          <div class="node-select-error-msg mt-4">
-            <div class="node-select-error-msg__txt"></div>
-          </div>
-          <div class="d-flex justify-center mt-5">
-            <button class="btn btn--opts cancel">Try Again</button>
-          </div>
+        <div class="error-msg d-none">
+          🙄🫠😖<br />Please select one or two elements.<br />
+          The selection element must be Rect 🟪 or Ellipse 🟣.
         </div>
       </div>
     </div>
@@ -376,16 +355,7 @@
 
     if (msg.type === "create-ui-view") {
       const ctx = document.querySelector(`.contents--${msg.ctxType}`);
-      // helpers
-      //
-      const dispErrorBalloon = () => {
-        document.querySelector(".contents--error").classList.remove("d-none");
-        document.querySelector(
-          ".node-select-error-msg__txt"
-        ).textContent = `${msg.msg} 😑😑😑`;
-      };
       const dispStatusMsg = (ctx) => {
-        ctx.classList.remove("d-none");
         ctx.querySelector(".state-msg__txt").textContent = `${msg.msg} 😀`;
       };
       const dispColorBar = (colorInfo, target) => {
@@ -407,6 +377,13 @@
       };
       const scaleLenErrMsg =
         "There is a possibility that the value of 'Scale Length' is empty or contains an invalid input.";
+
+      // initial
+      //
+      document.querySelectorAll(".contents").forEach((content) => {
+        content.classList.add("d-none");
+      });
+      ctx.classList.remove("d-none");
 
       // For Single Node
       //
@@ -495,19 +472,10 @@
         };
       }
 
-      // For All Contents
+      // For Error
       //
       if (msg.ctxType === "error") {
-        // DOM取得
-        const cancelBtn = ctx.querySelector(".cancel");
-
-        // 画面生成
-        dispErrorBalloon();
-
-        // イベント定義
-        cancelBtn.onclick = () => {
-          parent.postMessage({ pluginMessage: { type: "cancel" } }, "*");
-        };
+        ctx.querySelector(".error-msg").classList.remove("d-none");
       }
     }
   };

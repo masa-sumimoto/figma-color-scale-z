@@ -9,7 +9,7 @@ import getToBlackColor from "./fn/getToBlackColor";
 import getToSomeColor from "./fn/getToSomeColor";
 import getRandomNum from "./fn/getRandomNum";
 
-import { FORMATTED_COLOR_INFO, GET_COLOR, NODE_RESULT } from "./types";
+import { FORMATTED_COLOR_INFO, NODE_RESULT } from "./types";
 
 figma.showUI(__html__, {
   themeColors: true,
@@ -141,15 +141,8 @@ figma.ui.onmessage = (msg) => {
 //
 
 figma.on("selectionchange", () => {
-  // single-nodeモードの時のみ色の再選択を可能とする
-  // [todo] 後々、two-nodesモードでも可能にする
   const newSelection = [...figma.currentPage.selection];
-  if (
-    selectNodes.length === 1 &&
-    hasAllAvailableNodes(newSelection) &&
-    newSelection !== selectNodes
-  ) {
-    console.log("hello");
+  if (hasAllAvailableNodes(newSelection) && newSelection !== selectNodes) {
     init(newSelection);
     updateUi();
   }

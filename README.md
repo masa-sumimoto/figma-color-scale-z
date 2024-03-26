@@ -44,3 +44,7 @@ In the Figma Plugin portal, every time developers upload a new source, the versi
 ### Version 3
 
 - While the plug-in is running, it is now possible to seamlessly switch between single node mode and two nodes mode.
+
+### Version 4
+
+- Changes assuming dynamic page loading
